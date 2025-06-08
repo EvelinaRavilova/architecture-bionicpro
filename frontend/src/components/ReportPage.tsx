@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { useKeycloak } from '@react-keycloak/web';
 
+type IReport = {
+  id: number,
+  name: string
+}
+
 const ReportPage: React.FC = () => {
   const { keycloak, initialized } = useKeycloak();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reports, setReports] = useState<IReport[] | null>(null);
 
   const downloadReport = async () => {
     if (!keycloak?.token) {
@@ -21,8 +27,15 @@ const ReportPage: React.FC = () => {
           'Authorization': `Bearer ${keycloak.token}`
         }
       });
+      if (response.ok) {
+        const data = await response.json();
+        setReports(data);
+      } else if (response.status === 403) {
+        throw new Error('Permission denied')
+      } else {
+        throw new Error()
+      }
 
-      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -61,6 +74,15 @@ const ReportPage: React.FC = () => {
         >
           {loading ? 'Generating Report...' : 'Download Report'}
         </button>
+        <br/>
+        <h4>Reports:</h4>
+        <ul>
+          {reports
+            ? reports.map((report, index) => (
+                <li key={index}>{report.name}</li>
+              ))
+            : <div>No data</div>}
+        </ul>
 
         {error && (
           <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
