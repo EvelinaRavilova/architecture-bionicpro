@@ -4,7 +4,6 @@ import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 import ReportPage from './components/ReportPage';
 
 const DEBUG = process.env.DEBUG === '1'
-console.log('DEBUG', DEBUG, process.env.DEBUG, process.env.REACT_APP_KEYCLOAK_URL)
 
 const keycloakConfig: KeycloakConfig = {
   url: process.env.REACT_APP_KEYCLOAK_URL,
